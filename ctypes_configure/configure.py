@@ -151,7 +151,7 @@ class _CWriter(object):
         return try_compile([self.path], eci)
 
         
-def configure(CConfig):
+def configure(CConfig, noerr=False):
     """Examine the local system by running the C compiler.
     The CConfig class contains CConfigEntry attribues that describe
     what should be inspected; configure() returns a dict mapping
@@ -164,7 +164,7 @@ def configure(CConfig):
     for key in dir(CConfig):
         value = getattr(CConfig, key)
         if isinstance(value, CConfigEntry):
-            entries.append((key, value))            
+            entries.append((key, value))
 
     if entries:   # can be empty if there are only CConfigSingleEntries
         writer = _CWriter(CConfig)
@@ -179,7 +179,7 @@ def configure(CConfig):
         writer.close()
 
         eci = CConfig._compilation_info_
-        infolist = list(run_example_code(writer.path, eci))
+        infolist = list(run_example_code(writer.path, eci, noerr=noerr))
         assert len(infolist) == len(entries)
 
         resultinfo = {}
@@ -201,7 +201,6 @@ def configure(CConfig):
             writer = _CWriter(CConfig)
             writer.write_header()
             res[key] = value.question(writer.ask_gcc)
-
     return res
 
 # ____________________________________________________________
@@ -209,7 +208,6 @@ def configure(CConfig):
 
 class CConfigEntry(object):
     "Abstract base class."
-
 
 class Struct(CConfigEntry):
     """An entry in a CConfig class that stands for an externally
@@ -313,7 +311,6 @@ class Struct(CConfigEntry):
         S.__name__ = name
         return S
 
-
 class SimpleType(CConfigEntry):
     """An entry in a CConfig class that stands for an externally
     defined simple numeric type.
@@ -349,7 +346,6 @@ class SimpleType(CConfigEntry):
         if (size, sign) != size_and_sign(ctype):
             ctype = fixup_ctype(ctype, self.name, (size, sign))
         return ctype
-
 
 class ConstantInteger(CConfigEntry):
     """An entry in a CConfig class that stands for an externally
@@ -563,14 +559,17 @@ def fixup_ctype(fieldtype, fieldname, expected_size_and_sign):
 C_HEADER = """
 #include <stdio.h>
 #include <stddef.h>   /* for offsetof() */
+#ifndef _WIN32
+#  include <stdint.h>   /* FreeBSD: for uint64_t */
+#endif
 
 void dump(char* key, int value) {
     printf("%s: %d\\n", key, value);
 }
 """
 
-def run_example_code(filepath, eci):
-    executable = build_executable([filepath], eci)
+def run_example_code(filepath, eci, noerr=False):
+    executable = build_executable([filepath], eci, noerr=noerr)
     output = py.process.cmdexec(executable)
     section = None
     for line in output.splitlines():
