@@ -333,7 +333,7 @@ def log_spawned_cmd(spawn):
 class ProfOpt(object):
     #XXX assuming gcc style flags for now
     name = "profopt"
-    
+
     def __init__(self, compiler):
         self.compiler = compiler
 
@@ -357,7 +357,7 @@ class ProfOpt(object):
         finally:
             compiler.compile_extra.pop()
             compiler.link_extra.pop()
-            
+
 class CCompiler:
 
     def __init__(self, cfilenames, eci, outputfilename=None,
@@ -393,7 +393,7 @@ class CCompiler:
 
         if outputfilename is None:
             self.outputfilename = py.path.local(cfilenames[0]).new(ext=ext)
-        else: 
+        else:
             self.outputfilename = py.path.local(outputfilename)
         self.eci = eci
 
@@ -421,9 +421,9 @@ class CCompiler:
             if not noerr:
                 print >>sys.stderr, data
             raise
- 
+
     def _build(self):
-        from distutils.ccompiler import new_compiler 
+        from distutils.ccompiler import new_compiler
         compiler = new_compiler(force=1)
         if self.compiler_exe is not None:
             for c in '''compiler compiler_so compiler_cxx
@@ -431,19 +431,19 @@ class CCompiler:
                 compiler.executables[c][0] = self.compiler_exe
         compiler.spawn = log_spawned_cmd(compiler.spawn)
         objects = []
-        for cfile in self.cfilenames: 
+        for cfile in self.cfilenames:
             cfile = py.path.local(cfile)
-            old = cfile.dirpath().chdir() 
-            try: 
-                res = compiler.compile([cfile.basename], 
+            old = cfile.dirpath().chdir()
+            try:
+                res = compiler.compile([cfile.basename],
                                        include_dirs=self.eci.include_dirs,
                                        extra_preargs=self.compile_extra)
                 assert len(res) == 1
-                cobjfile = py.path.local(res[0]) 
+                cobjfile = py.path.local(res[0])
                 assert cobjfile.check()
                 objects.append(str(cobjfile))
-            finally: 
-                old.chdir() 
+            finally:
+                old.chdir()
         compiler.link_executable(objects, str(self.outputfilename),
                                  libraries=self.eci.libraries,
                                  extra_preargs=self.link_extra,

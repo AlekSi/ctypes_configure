@@ -6,7 +6,7 @@ import os, sys
 
 
 class Capture:
-    
+
     def __init__(self, mixed_out_err = False):
         "Start capture of the Unix-level stdout and stderr."
         if (not hasattr(os, 'tmpfile') or

@@ -89,7 +89,7 @@ class ConfigResult:
         self.result = {}
         self.info = info
         self.entries = entries
-        
+
     def get_entry_result(self, entry):
         try:
             return self.result[entry]
@@ -150,7 +150,7 @@ class _CWriter(object):
         eci = self.config._compilation_info_
         return try_compile([self.path], eci)
 
-        
+
 def configure(CConfig, noerr=False):
     """Examine the local system by running the C compiler.
     The CConfig class contains CConfigEntry attribues that describe
@@ -319,7 +319,7 @@ class SimpleType(CConfigEntry):
         self.name = name
         self.ctype_hint = ctype_hint
         self.ifdef = ifdef
-        
+
     def prepare_code(self):
         if self.ifdef is not None:
             yield '#ifdef %s' % (self.ifdef,)
@@ -451,7 +451,7 @@ class CConfigSingleEntry(object):
 class Has(CConfigSingleEntry):
     def __init__(self, name):
         self.name = name
-    
+
     def question(self, ask_gcc):
         return ask_gcc(self.name + ';')
 
@@ -480,7 +480,7 @@ def ctype_alignment(c_type):
     if issubclass(c_type, ctypes.Structure):
         return max([ctype_alignment(fld_type)
                      for fld_name, fld_type in c_type._fields_])
-    
+
     return ctypes.alignment(c_type)
 
 def uniquefilepath(LAST=[0]):
@@ -594,7 +594,7 @@ def get_python_include_dir():
 
 if __name__ == '__main__':
     doc = """Example:
-    
+
        ctypes_platform.py  -h sys/types.h  -h netinet/in.h
                            'struct sockaddr_in'
                            sin_port  c_int

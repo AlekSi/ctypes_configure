@@ -4,7 +4,7 @@ import ctypes
 
 class CConfigure:
     _compilation_info_ = configure.ExternalCompilationInfo(
-        
+
         # all lines landing in C header before includes
         pre_include_lines = [],
 
