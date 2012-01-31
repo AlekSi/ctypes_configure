@@ -1,4 +1,4 @@
-import os, sys, re, imp, py
+import os, sys, re, imp
 from ctypes_configure import stdoutcapture, TempDir
 import distutils
 
@@ -200,7 +200,6 @@ def compile_c_module(cfiles, modbasename, eci, tmpdir=None):
     #except ImportError:
     #    print "ERROR IMPORTING"
     #    pass
-    cfiles = [py.path.local(f) for f in cfiles]
     if tmpdir is None:
         tmpdir = configdir.join("module_cache")
         if not os.path.isdir(tmpdir):
@@ -226,11 +225,11 @@ def compile_c_module(cfiles, modbasename, eci, tmpdir=None):
         num += 1
         modname = '%s_%d' % (modbasename, num)
 
-    lastdir = tmpdir.chdir()
     libraries = eci.libraries
     ensure_correct_math()
     try:
         if debug: print "modname", modname
+        lastdir = os.getcwd()
         c = stdoutcapture.Capture(mixed_out_err = True)
         try:
             try:
@@ -276,7 +275,7 @@ def compile_c_module(cfiles, modbasename, eci, tmpdir=None):
                         attrs = {
                             'name': "testmodule",
                             'ext_modules': [
-                                Extension(modname, [str(cfile) for cfile in cfiles],
+                                Extension(modname, cfiles,
                                     include_dirs=include_dirs,
                                     library_dirs=library_dirs,
                                     extra_compile_args=extra_compile_args,
@@ -306,14 +305,13 @@ def compile_c_module(cfiles, modbasename, eci, tmpdir=None):
             print >>sys.stderr, data
             raise
     finally:
-        lastdir.chdir()
+        os.chdir(lastdir)
     return str(tmpdir.join(modname) + so_ext)
 
 def make_module_from_c(cfile, eci):
-    cfile = py.path.local(cfile)
-    modname = cfile.purebasename
+    modname = os.path.splitext(os.path.basename(cfile))[0]
     compile_c_module([cfile], modname, eci)
-    return import_module_from_directory(cfile.dirpath(), modname)
+    return import_module_from_directory(os.path.dirname(cfile), modname)
 
 def import_module_from_directory(dir, modname):
     file, pathname, description = imp.find_module(modname, [str(dir)])
@@ -395,13 +393,12 @@ class CCompiler:
             self.compile_extra += ['-O3', '-fomit-frame-pointer']
 
         if outputfilename is None:
-            self.outputfilename = py.path.local(cfilenames[0]).new(ext=ext)
+            self.outputfilename = os.path.splitext(cfilenames[0])[0] + ('.' + ext if ext else '')
         else:
-            self.outputfilename = py.path.local(outputfilename)
+            self.outputfilename = outputfilename
         self.eci = eci
 
     def build(self, noerr=False):
-        basename = self.outputfilename.new(ext='')
         data = ''
         try:
             saved_environ = os.environ.copy()
@@ -417,9 +414,9 @@ class CCompiler:
                 foutput, foutput = c.done()
                 data = foutput.read()
                 if data:
-                    fdump = basename.new(ext='errors').open("w")
-                    fdump.write(data)
-                    fdump.close()
+                    errors = os.path.splitext(self.outputfilename)[0] + '.errors'
+                    with open(errors, "w") as fdump:
+                        fdump.write(data)
         except:
             if not noerr:
                 print >>sys.stderr, data
@@ -435,25 +432,26 @@ class CCompiler:
         compiler.spawn = log_spawned_cmd(compiler.spawn)
         objects = []
         for cfile in self.cfilenames:
-            cfile = py.path.local(cfile)
-            old = cfile.dirpath().chdir()
+            old = os.getcwd()
+            os.chdir(os.path.dirname(cfile))
             try:
-                res = compiler.compile([cfile.basename],
+                res = compiler.compile([os.path.basename(cfile)],
                                        include_dirs=self.eci.include_dirs,
                                        extra_preargs=self.compile_extra)
                 assert len(res) == 1
-                cobjfile = py.path.local(res[0])
-                assert cobjfile.check()
-                objects.append(str(cobjfile))
+                cobjfile = res[0]
+                assert os.path.exists(cobjfile)
+                objects.append(cobjfile)
+
+                compiler.link_executable(objects, str(self.outputfilename),
+                                         libraries=self.eci.libraries,
+                                         extra_preargs=self.link_extra,
+                                         library_dirs=self.eci.library_dirs)
             finally:
-                old.chdir()
-        compiler.link_executable(objects, str(self.outputfilename),
-                                 libraries=self.eci.libraries,
-                                 extra_preargs=self.link_extra,
-                                 library_dirs=self.eci.library_dirs)
+                os.chdir(old)
 
 def build_executable(*args, **kwds):
     noerr = kwds.pop('noerr', False)
     compiler = CCompiler(*args, **kwds)
     compiler.build(noerr=noerr)
-    return str(compiler.outputfilename)
+    return compiler.outputfilename
