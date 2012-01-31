@@ -1,12 +1,11 @@
 #! /usr/bin/env python
 
-import os, sys
+import os
 import tempfile
 import subprocess
 import ctypes
 from ctypes_configure.cbuild import build_executable, configdir, try_compile
 from ctypes_configure.cbuild import ExternalCompilationInfo
-import distutils
 
 # ____________________________________________________________
 #
@@ -76,7 +75,7 @@ def memory_alignment():
            };
         """, [])
         result = ctypes.alignment(S)
-        assert result & (result-1) == 0, "not a power of two??"
+        assert result & (result - 1) == 0, "not a power of two??"
         _memory_alignment = result
     return _memory_alignment
 _memory_alignment = None
@@ -174,7 +173,6 @@ def configure(CConfig, noerr=False):
         for key, entry in entries:
             writer.write_entry(key, entry)
 
-        f = writer.f
         writer.start_main()
         for key, entry in entries:
             writer.write_entry_main(key)
@@ -235,10 +233,8 @@ class Struct(CConfigEntry):
         yield 'dump("align", offsetof(ctypesplatcheck2_t, s));'
         yield 'dump("size",  sizeof(ctypesplatcheck_t));'
         for fieldname, fieldtype in self.interesting_fields:
-            yield 'dump("fldofs %s", offsetof(ctypesplatcheck_t, %s));'%(
-                fieldname, fieldname)
-            yield 'dump("fldsize %s",   sizeof(s.%s));' % (
-                fieldname, fieldname)
+            yield 'dump("fldofs %s", offsetof(ctypesplatcheck_t, %s));' % (fieldname, fieldname)
+            yield 'dump("fldsize %s",   sizeof(s.%s));' % (fieldname, fieldname)
             if fieldtype in integer_class:
                 yield 's.%s = 0; s.%s = ~s.%s;' % (fieldname,
                                                    fieldname,
@@ -420,7 +416,7 @@ class DefinedConstantString(CConfigEntry):
         if info["defined"]:
             string = ''
             d = 0
-            while info.has_key('value_%d' % d):
+            while ('value_%d' % d) in info:
                 string += chr(info['value_%d' % d])
                 d += 1
             return string
@@ -510,6 +506,7 @@ class Field(object):
     def __init__(self, name, ctype):
         self.name = name
         self.ctype = ctype
+
     def __repr__(self):
         return '<field %s: %s>' % (self.name, self.ctype)
 

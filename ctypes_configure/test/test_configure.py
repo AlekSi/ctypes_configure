@@ -1,8 +1,7 @@
-import sys, struct
+import struct
 from ctypes_configure import configure
 from ctypes_configure.cbuild import ExternalCompilationInfo
 import ctypes
-import tempfile
 
 def test_dirent():
     dirent = configure.getstruct("struct dirent",
@@ -138,7 +137,6 @@ def test_ifdef():
                                   'double f;'
                                   '};'])
 
-
         s = configure.Struct('struct s', [('i', ctypes.c_int)],
                                    ifdef='XYZZY')
         z = configure.Struct('struct z', [('i', ctypes.c_int)],
@@ -174,7 +172,7 @@ def test_nested_structs():
     c_x = res["x"]
     c_y = res["y"]
     c_y_fields = dict(c_y._fields_)
-    assert issubclass(c_x , ctypes.Structure)
+    assert issubclass(c_x, ctypes.Structure)
     assert issubclass(c_y, ctypes.Structure)
     assert c_y_fields["x"] is c_x
 

@@ -6,6 +6,7 @@ debug = 0
 
 configdir = TempDir(prefix='ctypes_configure-')
 
+
 class ExternalCompilationInfo(object):
 
     _ATTRIBUTES = ['pre_include_lines', 'includes', 'include_dirs',
@@ -286,7 +287,7 @@ def compile_c_module(cfiles, modbasename, eci, tmpdir=None):
                             }
                         dist = Distribution(attrs)
                         if not dist.parse_command_line():
-                            raise ValueError, "distutils cmdline parse error"
+                            raise ValueError("distutils cmdline parse error")
                         dist.run_commands()
                     finally:
                         for key, value in saved_environ:
