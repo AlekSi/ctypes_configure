@@ -5,9 +5,9 @@ from ctypes_configure.cbuild import ExternalCompilationInfo
 
 def test_cache():
     configdir = configure.configdir
-    test_h = configdir.join('test_ctypes_platform2.h')
-    test_h.write('#define XYZZY 42\n'
-                 "#define large 2147483648L\n")
+    with open(configdir.join('test_ctypes_platform2.h'), "w") as test_h:
+        test_h.write('#define XYZZY 42\n'
+                     "#define large 2147483648L\n")
 
     class CConfig:
         _compilation_info_ = ExternalCompilationInfo(

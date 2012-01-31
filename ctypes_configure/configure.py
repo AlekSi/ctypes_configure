@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 
 import os, py, sys
+import tempfile
 import ctypes
 from ctypes_configure.cbuild import build_executable, configdir, try_compile
 from ctypes_configure.cbuild import ExternalCompilationInfo
@@ -108,8 +109,8 @@ class _CWriter(object):
     """ A simple class which aggregates config parts
     """
     def __init__(self, CConfig):
-        self.path = uniquefilepath()
-        self.f = self.path.open("w")
+        fd, self.path = tempfile.mkstemp(prefix='ctypesplatcheck_', suffix='.c', dir=str(configdir))
+        self.f = os.fdopen(fd, "w")
         self.config = CConfig
 
     def write_header(self):
@@ -482,11 +483,6 @@ def ctype_alignment(c_type):
                      for fld_name, fld_type in c_type._fields_])
 
     return ctypes.alignment(c_type)
-
-def uniquefilepath(LAST=[0]):
-    i = LAST[0]
-    LAST[0] += 1
-    return configdir.join('ctypesplatcheck_%d.c' % i)
 
 alignment_types = [
     ctypes.c_short,

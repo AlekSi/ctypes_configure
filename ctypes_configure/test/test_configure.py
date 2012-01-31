@@ -1,7 +1,8 @@
-import py, sys, struct
+import sys, struct
 from ctypes_configure import configure
 from ctypes_configure.cbuild import ExternalCompilationInfo
 import ctypes
+import tempfile
 
 def test_dirent():
     dirent = configure.getstruct("struct dirent",
@@ -105,8 +106,8 @@ def test_defined():
 
 def test_configure():
     configdir = configure.configdir
-    test_h = configdir.join('test_ctypes_platform.h')
-    test_h.write('#define XYZZY 42\n')
+    with open(configdir.join('test_ctypes_platform.h'), "w") as test_h:
+        test_h.write('#define XYZZY 42\n')
 
     class CConfig:
         _compilation_info_ = ExternalCompilationInfo(

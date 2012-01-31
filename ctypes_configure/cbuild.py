@@ -1,11 +1,10 @@
-
-import os, sys, inspect, re, imp, py
-from ctypes_configure import stdoutcapture
+import os, sys, re, imp, py
+from ctypes_configure import stdoutcapture, TempDir
 import distutils
 
 debug = 0
 
-configdir = py.path.local.make_numbered_dir(prefix='ctypes_configure-')
+configdir = TempDir(prefix='ctypes_configure-')
 
 class ExternalCompilationInfo(object):
 
@@ -113,7 +112,9 @@ class ExternalCompilationInfo(object):
         if not self.separate_module_sources:
             return self
         if cache_dir is None:
-            cache_dir = configdir.join('module_cache').ensure(dir=1)
+            cache_dir = configdir.join('module_cache')
+            if not os.path.isdir(cache_dir):
+                os.mkdir(cache_dir)
         num = 0
         files = []
         for source in self.separate_module_sources:
@@ -201,7 +202,9 @@ def compile_c_module(cfiles, modbasename, eci, tmpdir=None):
     #    pass
     cfiles = [py.path.local(f) for f in cfiles]
     if tmpdir is None:
-        tmpdir = configdir.join("module_cache").ensure(dir=1)
+        tmpdir = configdir.join("module_cache")
+        if not os.path.isdir(tmpdir):
+            os.mkdir(tmpdir)
     num = 0
     cfiles += eci.separate_module_files
     include_dirs = list(eci.include_dirs)
