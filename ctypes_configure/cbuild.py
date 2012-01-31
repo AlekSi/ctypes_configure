@@ -381,8 +381,8 @@ class CCompiler:
         if sys.platform == 'win32':
             self.link_extra += ['/DEBUG'] # generate .pdb file
         if sys.platform == 'darwin':
-            # support Fink & Darwinports
-            for s in ('/sw/', '/opt/local/'):
+            # support Fink, Darwinports and Homebrew
+            for s in ('/sw/', '/opt/local/', '/usr/local/'):
                 if s + 'include' not in self.include_dirs and \
                    os.path.exists(s + 'include'):
                     self.include_dirs.append(s + 'include')
