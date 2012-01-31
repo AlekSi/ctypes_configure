@@ -1,7 +1,8 @@
 #! /usr/bin/env python
 
-import os, py, sys
+import os, sys
 import tempfile
+import subprocess
 import ctypes
 from ctypes_configure.cbuild import build_executable, configdir, try_compile
 from ctypes_configure.cbuild import ExternalCompilationInfo
@@ -566,7 +567,7 @@ void dump(char* key, int value) {
 
 def run_example_code(filepath, eci, noerr=False):
     executable = build_executable([filepath], eci, noerr=noerr)
-    output = py.process.cmdexec(executable)
+    output = subprocess.check_output(executable)
     section = None
     for line in output.splitlines():
         line = line.strip()
