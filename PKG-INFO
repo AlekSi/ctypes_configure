@@ -5,6 +5,6 @@ Summary: Ctypes Configuration
 Home-page: http://codespeak.net/svn/pypy/dist/ctypes_configure/doc/configure.html
 Author: Maciej Fijalkowski
 Author-email: fijall@gmail.com
-License: UNKNOWN
+License: MIT
 Description: UNKNOWN
 Platform: UNKNOWN
