@@ -9,4 +9,5 @@ setup(name='ctypes_configure',
       author_email='fijall@gmail.com',
       url='http://codespeak.net/svn/pypy/dist/ctypes_configure/doc/configure.html',
       packages=['ctypes_configure', 'ctypes_configure/test'],
+      license='LICENSE',
      )
