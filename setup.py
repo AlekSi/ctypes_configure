@@ -3,7 +3,7 @@
 from distutils.core import setup
 
 setup(name='ctypes_configure',
-      version='0.4.1',
+      version='0.4.2',
       description='Ctypes Configuration',
       author='Maciej Fijalkowski',
       author_email='fijall@gmail.com',
