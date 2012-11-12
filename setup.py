@@ -2,12 +2,14 @@
 
 from distutils.core import setup
 
-setup(name='ctypes_configure',
-      version='0.4.2',
+setup(name='ctypes_configure2',
+      version='0.4',
       description='Ctypes Configuration',
       author='Maciej Fijalkowski',
       author_email='fijall@gmail.com',
-      url='http://codespeak.net/svn/pypy/dist/ctypes_configure/doc/configure.html',
+      maintainer='Alexey Palazhchenko',
+      maintainer_email='alexey.palazhchenko@gmail.com',
+      url='http://codespeak.net/~fijal/configure.html',
       packages=['ctypes_configure', 'ctypes_configure/test'],
       license='LICENSE',
      )
