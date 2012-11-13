@@ -1,8 +1,8 @@
 Metadata-Version: 1.0
-Name: ctypes_configure
-Version: 0.1
+Name: ctypes_configure2
+Version: 0.4
 Summary: Ctypes Configuration
-Home-page: http://codespeak.net/svn/pypy/dist/ctypes_configure/doc/configure.html
+Home-page: http://codespeak.net/~fijal/configure.html
 Author: Maciej Fijalkowski
 Author-email: fijall@gmail.com
 License: MIT
