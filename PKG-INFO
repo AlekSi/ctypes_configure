@@ -1,0 +1,10 @@
+Metadata-Version: 1.1
+Name: ctypes_configure2
+Version: 0.4.2
+Author: Maciej Fijalkowski
+Author-email: fijall@gmail com
+Maintainer: Alexey Palazhchenko
+Maintainer-email: alexey palazhchenko@gmail com
+Home-page: http://codespeak.net/~fijal/configure.html
+Summary: Ctypes Configuration
+License: MIT
